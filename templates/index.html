@@ -1,3 +1,16 @@
-Tervetuloa!
-<p>
-Olet sivuston {{ counter }}. käyttäjä
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <h1>Welcome to the DAZHONGDIANPING!</h1>
+    {% if session['username'] %}
+        <p>Hello, {{ session['username'] }}!</p>
+        <a href="/logout">Logout</a>
+    {% else %}
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    {% endif %}
+</body>
+</html>
