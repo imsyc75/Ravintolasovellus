@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ restaurant.name }}</title>
+</head>
+<body>
+    <h1>{{ restaurant.name }}</h1>
+    <p>{{ restaurant.description }}</p>
+    <p>Address: {{ restaurant.address }}</p>
+    <p>Opening hours: {{ restaurant.opening_hours }}</p>
+
+    <h2>Reviews</h2>
+    {% for review in reviews %}
+        <div>
+            <p>{{ review.rating }} Stars</p>
+            <p>{{ review.comment }}</p>
+            <p>Reviewed on: {{ review.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+        </div>
+    {% endfor %}
+    <a href="/restaurants">Back to map</a>
+</body>
+</html>
