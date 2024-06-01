@@ -1,7 +1,7 @@
-from flask import render_template, request, redirect, session
-from app import app
-from db import db
-from models import User
+from flask import render_template, request, redirect, session, jsonify # type: ignore
+from app import app # type: ignore
+from db import db # type: ignore
+from models import User, Restaurant,Review# type: ignore
 
 @app.route('/')
 def index():
@@ -14,7 +14,7 @@ def register():
     elif request.method == 'POST':
         name = request.form['name']
         password = request.form['password']
-        role = 1  # 你可以根据需要设置角色，暂时设为1
+        role = 1  # Defaults to 1, and can be set by the administrator.
         
         if User.query.filter_by(name=name).first():
             return 'Username already exists', 400
@@ -37,7 +37,7 @@ def login():
         user = User.query.filter_by(name=name).first()
         if user and user.check_password(password):
             session['username'] = user.name
-            return 'Login successful', 200
+            return redirect('/restaurants')
         else:
             return 'Invalid username or password, please try again.', 401
 
@@ -45,3 +45,27 @@ def login():
 def logout():
     session.pop('username', None)
     return redirect('/')
+
+@app.route('/restaurants')
+def restaurants():
+    restaurant_list = Restaurant.query.all()  
+    restaurants = [
+        {
+            "restaurant_id": restaurant.restaurant_id, 
+            "name": restaurant.name,
+            "lat": restaurant.latitude,
+            "lon": restaurant.longitude,
+            "info": f"{restaurant.description}<br>{restaurant.address}<br>opening hours:{restaurant.opening_hours}"
+        } for restaurant in restaurant_list
+    ]
+    return render_template('restaurants.html', restaurants=restaurants)
+
+@app.route('/restaurant/<int:restaurant_id>')
+def restaurant_detail(restaurant_id):
+
+    restaurant = Restaurant.query.get(restaurant_id)
+    if not restaurant:
+        return "Restaurant not found", 404
+    
+    reviews = Review.query.filter_by(restaurant_id=restaurant_id).all()
+    return render_template('restaurant_detail.html', restaurant=restaurant, reviews=reviews)
