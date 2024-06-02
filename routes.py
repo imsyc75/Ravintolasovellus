@@ -60,6 +60,7 @@ def restaurants():
     ]
     return render_template('restaurants.html', restaurants=restaurants)
 
+#see the restaurants information
 @app.route('/restaurant/<int:restaurant_id>')
 def restaurant_detail(restaurant_id):
 
@@ -69,3 +70,24 @@ def restaurant_detail(restaurant_id):
     
     reviews = Review.query.filter_by(restaurant_id=restaurant_id).all()
     return render_template('restaurant_detail.html', restaurant=restaurant, reviews=reviews)
+
+#add review of restaurants
+@app.route('/restaurant/<int:restaurant_id>/add_review', methods=['POST'])
+def add_review(restaurant_id):
+    if 'username' not in session:
+        return redirect('/login')
+    user = User.query.filter_by(name=session['username']).first()
+    if not user:
+        return 'User not found', 404
+
+    comment = request.form['comment']
+    rating = float(request.form['rating'])
+    new_review = Review(
+        restaurant_id=restaurant_id,
+        user_id=user.id,
+        rating=rating,
+        comment=comment
+    )
+    db.session.add(new_review)
+    db.session.commit()
+    return redirect(f'/restaurant/{restaurant_id}')
