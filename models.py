@@ -1,6 +1,7 @@
 from db import db # type: ignore
 from werkzeug.security import generate_password_hash, check_password_hash # type: ignore
 from datetime import datetime
+from sqlalchemy.orm import relationship # type: ignore
 
 class User(db.Model):
     __tablename__ = 'users' 
@@ -30,17 +31,21 @@ class Restaurant(db.Model):
     def __repr__(self):
         return f'<Restaurant {self.name}>'
 
+
 class Review(db.Model):
     __tablename__ = 'reviews'
     
     review_id = db.Column(db.Integer, primary_key=True)
     restaurant_id = db.Column(db.Integer, db.ForeignKey('restaurants.restaurant_id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id')) 
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     rating = db.Column(db.Float)
     comment = db.Column(db.String(1024))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    user = relationship("User", backref="reviews")
 
     def __repr__(self):
         return f'<Review {self.review_id} by User {self.user_id}>'
+
 
 
