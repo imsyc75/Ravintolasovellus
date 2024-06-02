@@ -10,14 +10,28 @@
     <p>Address: {{ restaurant.address }}</p>
     <p>Opening hours: {{ restaurant.opening_hours }}</p>
 
-    <h2>Reviews</h2>
-    {% for review in reviews %}
+    {% if session.username %}
+    <h2>Comments
+    <form action="{{ url_for('add_review', restaurant_id=restaurant.restaurant_id) }}" method="post">
+        Rating: <input type="number" name="rating" min="1" max="5" required>
+        comment: <textarea name="comment" required></textarea>
+        <button type="submit">Submit</button>
+    </form>
+    {% endif %}
+
+    <h2>Comments</h2>
+    <div>
+        {% for review in reviews %}
         <div>
-            <p>{{ review.rating }} Stars</p>
+            <strong>{{ review.user.name }}</strong> rates: {{ review.rating }}
             <p>{{ review.comment }}</p>
-            <p>Reviewed on: {{ review.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p>time: {{ review.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
         </div>
-    {% endfor %}
-    <a href="/restaurants">Back to map</a>
+        {% endfor %}
+    </div>
+
+    <a href="/restaurants">Back to the map</a>
 </body>
 </html>
+
+
