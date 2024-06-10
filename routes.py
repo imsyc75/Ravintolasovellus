@@ -136,7 +136,7 @@ def add_review(restaurant_id):
 
     comment = request.form['comment']
     rating = float(request.form['rating'])
-    sql = """"INSERT INTO reviews (restaurant_id, user_id, rating, comment) VALUES (%s, %s, %s, %s)""""
+    sql = """INSERT INTO reviews (restaurant_id, user_id, rating, comment) VALUES (%s, %s, %s, %s)"""
     cur.execute(sql,(restaurant_id, user[0], rating, comment))
     conn.commit()
     cur.close()
