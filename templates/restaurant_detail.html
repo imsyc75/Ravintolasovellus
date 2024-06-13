@@ -23,7 +23,7 @@
     <div>
         {% for review in reviews %}
         <div>
-            <strong>{{ review.user.name }}</strong> rates: {{ review.rating }}
+            <strong>{{ review.user_name }}</strong> rates: {{ review.rating }}
             <p>{{ review.comment }}</p>
             <p>time: {{ review.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
         </div>

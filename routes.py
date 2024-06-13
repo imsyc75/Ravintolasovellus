@@ -1,6 +1,7 @@
 from flask import request, render_template, redirect, session # type: ignore
 from app import app # type: ignore
 from db import get_db_connection # type: ignore
+from werkzeug.security import generate_password_hash, check_password_hash # type: ignore
 
 
 @app.route('/')
@@ -16,7 +17,9 @@ def register():
         name = request.form['name']
         password = request.form['password']
         role = 1 # Defaults to 1, and can be set by the administrator.
-
+        
+        hashed_password = generate_password_hash(password)
+                                                 
         conn = get_db_connection()
         cur = conn.cursor()
 
@@ -52,10 +55,10 @@ def login():
         conn = get_db_connection()
         cur = conn.cursor()
         try:
-            sql = """SELECT password FROM users WHERE name = %s 
-            AND password = crypt(%s, password)"""
-            cur.execute(sql, (name, password))
-            if cur.fetchone():
+            sql = """SELECT password FROM users WHERE name = %s"""
+            cur.execute(sql, (name,))
+            user = cur.fetchone()
+            if user and check_password_hash(user[0], password):
                 session['username'] = name
                 return redirect('/')
             else:
@@ -73,7 +76,7 @@ def logout():
     return redirect('/')
 
 
-@app.route('/restaurants')
+@app.route('/restaurants') 
 def restaurants():
     conn = get_db_connection()
     cur = conn.cursor()
@@ -97,6 +100,7 @@ def restaurants():
     return render_template('restaurants.html', restaurants=restaurants)
 
 
+
 #see the restaurants information
 @app.route('/restaurant/<int:restaurant_id>')
 def restaurant_detail(restaurant_id):
@@ -104,16 +108,39 @@ def restaurant_detail(restaurant_id):
     cur = conn.cursor()
     sql = """SELECT * FROM restaurants WHERE restaurant_id = %s"""
     cur.execute(sql, (restaurant_id,))
-    restaurant = cur.fetchone()
+    restaurant_info = cur.fetchone()
 
-    if not restaurant:
+    if not restaurant_info:
+        cur.close()
+        conn.close()
         return "Restaurant not found", 404
     
+    restaurant = {
+        "restaurant_id": restaurant_info[0],
+        "name": restaurant_info[1],
+        "address": restaurant_info[2],
+        "description": restaurant_info[3],
+        "latitude": restaurant_info[4],
+        "longitude": restaurant_info[5],
+        "opening_hours": restaurant_info[6]
+    }
     sql = """ SELECT r.*, u.name  
               FROM reviews r JOIN users u ON r.user_id = u.id 
               WHERE r.restaurant_id = %s"""
     cur.execute(sql, (restaurant_id,))
-    reviews = cur.fetchall()
+    reviews_details = cur.fetchall()
+    
+    reviews = [
+        {
+            "review_id": review[0],
+            "restaurant_id": review[1],
+            "user_id": review[2],
+            "rating": review[3],
+            "comment": review[4],
+            "timestamp": review[5],
+            "user_name": review[6]
+        } for review in reviews_details
+    ]
 
     cur.close()
     conn.close()
@@ -128,7 +155,7 @@ def add_review(restaurant_id):
     
     conn = get_db_connection()
     cur = conn.cursor()
-    sql = """""SELECT id FROM users WHERE name = %s"""
+    sql = """SELECT id FROM users WHERE name = %s"""
     cur.execute(sql, (session['username'],))
     user = cur.fetchone()
     if not user:
