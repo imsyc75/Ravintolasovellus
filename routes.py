@@ -70,7 +70,8 @@ def login():
                 session['role'] = user[2]
                 if user[2] == 0:  
                     return redirect('/admin_page')
-                return redirect('/')
+                else:
+                    return redirect('/')
             else:
                 return 'Invalid username or password, please try again.', 401
         except Exception as e:
@@ -180,6 +181,21 @@ def add_review(restaurant_id):
     cur.close()
     conn.close()
     return redirect(f'/restaurant/{restaurant_id}')
+
+
+
+@app.route('/delete_review/<int:review_id>', methods=['POST'])
+def delete_review(review_id):
+    if 'username' not in session or session['role'] != 0:
+        return "Unauthorized", 403 
+    conn = get_db_connection()
+    cur = conn.cursor()
+    sql = "DELETE FROM reviews WHERE review_id = %s"
+    cur.execute(sql, (review_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect(request.referrer) 
 
 
 
