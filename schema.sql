@@ -13,7 +13,8 @@ CREATE TABLE restaurants (
     description TEXT,
     latitude NUMERIC(9,6),
     longitude NUMERIC(9,6),
-    opening_hours VARCHAR(255)
+    opening_hours VARCHAR(255),
+    category_id INTEGER
 );
 
 
