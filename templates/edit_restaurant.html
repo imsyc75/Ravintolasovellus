@@ -31,8 +31,18 @@
                 <input type="text" class="form-control" id="longitude" name="longitude" value="{{ restaurant.longitude }}" required>
             </div>
             <div class="mb-3">
-                <label for="opening_hours" class="form-label">Opening Hours:</label>
+                <label for="opening_hours" the="form-label">Opening Hours:</label>
                 <input type="text" class="form-control" id="opening_hours" name="opening_hours" value="{{ restaurant.opening_hours }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="category_id" class="form-label">Category:</label>
+                <select class="form-control" id="category_id" name="category_id" required>
+                    {% for category in categories %}
+                    <option value="{{ category.category_id }}" {% if category.category_id == restaurant.category_id %}selected{% endif %}>
+                        {{ category.category_name }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

@@ -93,24 +93,23 @@ def logout():
 def restaurants():
     conn = get_db_connection()
     cur = conn.cursor()
-    sql = """SELECT restaurant_id, name, latitude, longitude, 
-            description, address, opening_hours 
-            FROM restaurants"""
-    cur.execute(sql)
-
+    category_filter = request.args.get('category')
+    if category_filter:
+        sql = """SELECT r.*, c.category_name FROM restaurants r
+                       JOIN categories c ON r.category_id = c.category_id
+                       WHERE c.category_name = %s"""
+        cur.execute(sql, (category_filter,))
+    else:
+        sql = """SELECT r.*, c.category_name FROM restaurants r
+                       JOIN categories c ON r.category_id = c.category_id"""
+        cur.execute(sql)
     restaurant_list = cur.fetchall()
-    restaurants = [
-        {
-            "restaurant_id": restaurant[0],
-            "name": restaurant[1],
-            "lat": restaurant[2],
-            "lon": restaurant[3],
-            "info": f"{restaurant[4]}<br>{restaurant[5]}<br>opening hours:{restaurant[6]}"
-        } for restaurant in restaurant_list
-    ]
+
+    cur.execute('SELECT * FROM categories')
+    categories = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('restaurants.html', restaurants=restaurants)
+    return render_template('restaurants.html', restaurants=restaurant_list,categories=categories)
 
 
 
@@ -214,8 +213,12 @@ def admin_page():
 
 @app.route('/add_restaurant', methods=['GET', 'POST'])
 def add_restaurant():
+    conn = get_db_connection()
+    cur = conn.cursor()
     if request.method == 'GET':
-        return render_template('add_restaurant.html')
+        cur.execute('SELECT * FROM categories')
+        categories = cur.fetchall()
+        return render_template('add_restaurant.html', categories=categories)
     elif request.method == 'POST':
         name = request.form['name']
         address = request.form['address']
@@ -223,12 +226,11 @@ def add_restaurant():
         latitude = request.form['latitude']
         longitude = request.form['longitude']
         opening_hours = request.form['opening_hours']
+        category_id = request.form['category_id']
 
-        conn = get_db_connection()
-        cur = conn.cursor()
-        sql = """INSERT INTO restaurants (name, address, description, latitude, longitude, opening_hours) 
+        sql = """INSERT INTO restaurants (name, address, description, latitude, longitude, opening_hours, category_id) 
                  VALUES (%s, %s, %s, %s, %s, %s)"""
-        cur.execute(sql, (name, address, description, latitude, longitude, opening_hours))
+        cur.execute(sql, (name, address, description, latitude, longitude, opening_hours,category_id))
         conn.commit()
         cur.close()
         conn.close()
@@ -245,9 +247,11 @@ def edit_restaurant(restaurant_id):
         sql = "SELECT * FROM restaurants WHERE restaurant_id = %s"
         cur.execute(sql, (restaurant_id,))
         restaurant = cur.fetchone()
+        cur.execute('SELECT * FROM categories')
+        categories = cur.fetchall()
         cur.close()
         conn.close()
-        return render_template('edit_restaurant.html', restaurant=restaurant)
+        return render_template('edit_restaurant.html', restaurant=restaurant, categories=categories)
     elif request.method == 'POST':
         name = request.form['name']
         address = request.form['address']
@@ -255,10 +259,11 @@ def edit_restaurant(restaurant_id):
         latitude = request.form['latitude']
         longitude = request.form['longitude']
         opening_hours = request.form['opening_hours']
+        category_id = request.form['category_id'] 
 
         sql = """UPDATE restaurants SET name = %s, address = %s, description = %s, 
-                 latitude = %s, longitude = %s, opening_hours = %s WHERE restaurant_id = %s"""
-        cur.execute(sql, (name, address, description, latitude, longitude, opening_hours, restaurant_id))
+                 latitude = %s, longitude = %s, opening_hours = %s, category_id = %s WHERE restaurant_id = %s"""
+        cur.execute(sql, (name, address, description, latitude, longitude, opening_hours, category_id, restaurant_id))
         conn.commit()
         cur.close()
         conn.close()

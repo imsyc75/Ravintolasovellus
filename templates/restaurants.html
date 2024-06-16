@@ -12,6 +12,12 @@
 </head>
 <body>
     <h1>Helsinki Restaurants Map</h1>
+    <select id="categoryFilter" onchange="filterRestaurants()">
+        <option value="">All Categories</option>
+        {% for category in categories %}
+        <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+        {% endfor %}
+    </select>
     <div id="map"></div>
     <script>
         var map = L.map('map').setView([60.1699, 24.9384], 12); 
@@ -20,14 +26,24 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
-        
         var restaurants = {{ restaurants|tojson|safe }};
-        restaurants.forEach(function(restaurant) {
-            var marker = L.marker([restaurant.lat, restaurant.lon]).addTo(map);
-            marker.bindPopup("<b>" + restaurant.name + "</b><br>" + restaurant.info +
-                "<br><a href='/restaurant/" + restaurant.restaurant_id + "'>More Info</a>");
-            });
+        var markers = [];
 
+        function filterRestaurants() {
+            var selectedCategory = document.getElementById('categoryFilter').value;
+            markers.forEach(marker => map.removeLayer(marker)); 
+            markers = [];
+            restaurants.forEach(function(restaurant) {
+                if (restaurant.category_id == selectedCategory || selectedCategory === '') {
+                    var marker = L.marker([restaurant.lat, restaurant.lon]).addTo(map);
+                    marker.bindPopup("<b>" + restaurant.name + "</b><br>" + restaurant.info +
+                        "<br><a href='/restaurant/" + restaurant.restaurant_id + "'>More Info</a>");
+                    markers.push(marker);
+                }
+            });
+        }
+
+        filterRestaurants();
     </script>
 </body>
 </html>
