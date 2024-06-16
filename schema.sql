@@ -34,10 +34,6 @@ CREATE TABLE categories (
 );
 
 
-ALTER TABLE restaurants
-ADD COLUMN category_id INT,
-ADD FOREIGN KEY (category_id) REFERENCES categories(category_id);
-
 -- insert the categories information
 INSERT INTO categories (category_id, category_name, category_type) VALUES (1, 'Finnish', 'country');
 INSERT INTO categories (category_id, category_name, category_type) VALUES (2, 'French', 'country');
