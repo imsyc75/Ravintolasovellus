@@ -18,7 +18,7 @@ Sovelluksen ominaisuuksia ovat:
 * Seuraavaksi täydentelen ravintoloiden luokittelua. Järjestelmänvalvojat voivat myös hallita luokkia. Lisäksi käyttäjät näkevät myös ravintolat luokitusten perusteella. Kun kaikki toiminnot on toteutettu, keskityn käyttökokemuksen parantamiseen, kuten sivun kaunistamiseen, ulkoasun lisäämiseen ja siihen, että toiminta ei ole enää yksisäikeistä. Lisäksi minun on myös selvitettävä, onko koodissa haavoittuvuusongelmia.
 
 # SOLVELLUKSEN TESTAAMINEN
-Sovellusta ei ole testattavissa Fly.iossa. Käynnistään sovelluksen paikallisesti.Kloonaa tämä repositorio koneellesi ja siirry sen juurikansioon. Aktivoi virtuaaliympäristö komennoilla
+Sovellusta ei ole testattavissa Fly.iossa. Käynnistään sovelluksen paikallisesti. Kloonaa tämä repositorio koneellesi ja siirry sen kansioon. Aktivoi virtuaaliympäristö komennoilla
 ```python
 $ cd <file>
 $ python3 -m venv venv  
@@ -29,14 +29,14 @@ Asenna riippuvuudet komennolla
 (venv) $ pip install -r requirements.txt
 ```
 
-Luo Postgresiin uusi tietokanta komennoilla ja Määritä sitten tietokannan skeema komennolla
+Luo Postgresiin uusi tietokanta ja määritä sitten tietokannan komennolla
 ```python
 $ psql  
 user=# CREATE DATABASE <tietokannan_nimi>;
 $ psql -d <tietokannan_nimi> < schema.sql
 ```
 
-Määritä siellä salainen avaimesi ja tietokannan osoite ja muistaa luodaan sovelluksen juurikansiossa vielä .env -tiedosto
+Määritä salainen avaimesi ja tietokannan osoite. Luo sovelluksen kansiossa .env -tiedosto
 ```python
 DATABASE_URL=postgresql:///<tietokannan_nimi> 
 SECRET_KEY=<salainen avaimesi>
