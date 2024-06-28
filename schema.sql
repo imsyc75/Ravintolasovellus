@@ -5,6 +5,12 @@ CREATE TABLE users(
     role INTEGER NOT NULL --admin is 0, user is 1
 );
 
+CREATE TABLE categories (
+    category_id INT PRIMARY KEY,
+    category_name VARCHAR(255) NOT NULL,
+    category_type VARCHAR(255) NOT NULL  -- ex. "cuisine" or "country"
+);
+
 
 CREATE TABLE restaurants (
     restaurant_id SERIAL PRIMARY KEY NOT NULL,
@@ -27,11 +33,6 @@ CREATE TABLE reviews (
     timestamp TIMESTAMP 
 );
 
-CREATE TABLE categories (
-    category_id INT PRIMARY KEY,
-    category_name VARCHAR(255) NOT NULL,
-    category_type VARCHAR(255) NOT NULL  -- ex. "cuisine" or "country"
-);
 
 
 -- insert the categories information
