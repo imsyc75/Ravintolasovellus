@@ -197,18 +197,23 @@ def delete_review(review_id):
     return redirect(request.referrer) 
 
 
-
 @app.route('/admin_page')
 def admin_page():
     conn = get_db_connection()  
     cur = conn.cursor()
+    
     sql = "SELECT * FROM restaurants"
     cur.execute(sql)
     restaurants = cur.fetchall()
+
+    sql = "SELECT * FROM categories"
+    cur.execute(sql)
+    categories = cur.fetchall()
+
     cur.close()
     conn.close()
+    return render_template('admin_page.html', restaurants=restaurants, categories=categories)
 
-    return render_template('admin_page.html', restaurants=restaurants)
 
 
 @app.route('/add_restaurant', methods=['GET', 'POST'])
@@ -280,4 +285,45 @@ def delete_restaurant(restaurant_id):
     conn.commit()
     cur.close()
     conn.close()
+    return redirect('/admin_page')
+
+
+@app.route('/add_category', methods=['GET', 'POST'])
+def add_category():
+    if request.method == 'GET':
+        return render_template('add_category.html')
+    elif request.method == 'POST':
+        category_name = request.form['category_name']
+        category_type = request.form['category_type'] 
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            sql = "INSERT INTO categories (category_name, category_type) VALUES (%s, %s)"
+            cur.execute(sql, (category_name, category_type))
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            return str(e), 500
+        finally:
+            cur.close()
+            conn.close()
+        return redirect('/admin_page')
+
+
+
+
+@app.route('/delete_category/<int:category_id>', methods=['POST'])
+def delete_category(category_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        sql = "DELETE FROM categories WHERE category_id = %s"
+        cur.execute(sql, (category_id,))
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        return str(e), 500
+    finally:
+        cur.close()
+        conn.close()
     return redirect('/admin_page')

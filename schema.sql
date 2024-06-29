@@ -6,9 +6,9 @@ CREATE TABLE users(
 );
 
 CREATE TABLE categories (
-    category_id INT PRIMARY KEY,
+    category_id SERIAL PRIMARY KEY,
     category_name VARCHAR(255) NOT NULL,
-    category_type VARCHAR(255) NOT NULL  -- ex. "cuisine" or "country"
+    category_type VARCHAR(255) -- ex. "cuisine" or "country"
 );
 
 
