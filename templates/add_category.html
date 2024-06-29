@@ -1,18 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Category</title>
-</head>
-<body>
-    <h1>Add Category</h1>
-    <form action="/add_category" method="post">
-        <label for="category_name">Category Name:</label>
-        <input type="text" id="category_name" name="category_name" required><br>
-        <label for="category_type">Category Type:</label>
-        <input type="text" id="category_type" name="category_type" required><br>
-        <button type="submit">Add Category</button>
-    </form>
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}
+Add Category
+{% endblock %}
+
+{% block content %}
+<h1>Add Category</h1>
+<form action="/add_category" method="post">
+    <label for="category_name">Category Name:</label>
+    <input type="text" id="category_name" name="category_name" required><br>
+    <label for="category_type">Category Type:</label>
+    <input type="text" id="category_type" name="category_type" required><br>
+    <button type="submit">Add Category</button>
+</form>
+{% endblock %}

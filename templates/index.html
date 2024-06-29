@@ -1,17 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Home</title>
-</head>
-<body>
-    <h1>Welcome to the TastyFood!</h1>
-    {% if session['username'] %}
-        <p>Hello, {{ session['username'] }}!</p>
-        <a href="/logout">Logout</a>
-        <a href="/restaurants">View Restaurants</a>
-    {% else %}
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
-    {% endif %}
-</body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<h1>Welcome to TastyFood!</h1>
+{% if session['username'] %}
+    <p>Hello, {{ session['username'] }}!</p>
+{% else %}
+    <p>Please login or register to continue.</p>
+{% endif %}
+{% endblock %}
+
