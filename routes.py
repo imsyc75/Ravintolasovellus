@@ -53,9 +53,8 @@ def login():
     elif request.method == 'POST':
         name = request.form.get('name')
         password = request.form.get('password')
-        role = request.form.get('role')
 
-        if not name or not password or not role:
+        if not name or not password:
             return "Please fill out all fields.", 400
 
         conn = get_db_connection()
@@ -67,7 +66,7 @@ def login():
 
             if user and check_password_hash(user[1], password):
                 session['username'] = user[0]
-                session['role'] = user[2]
+                session['role'] = user[2]  # Keep this line to use the role in session if needed
                 if user[2] == 0:  
                     return redirect('/admin_page')
                 else:
@@ -79,6 +78,7 @@ def login():
         finally:
             cur.close()
             conn.close()
+
 
 
 
