@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash # type
 def index():
     conn = get_db_connection()
     cur = conn.cursor()
-    sql = """SELECT r.name as restaurant_name, d.description, d.start_date, d.end_date
+    sql = """SELECT r.name, d.description, d.start_date, d.end_date
         FROM discounts d
         JOIN restaurants r ON d.restaurant_id = r.restaurant_id
         WHERE d.end_date >= CURRENT_DATE"""

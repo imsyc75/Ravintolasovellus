@@ -26,10 +26,10 @@ Home
         <tbody>
             {% for discount in discounts %}
             <tr>
-                <td>{{ discount.restaurant_name }}</td>
-                <td>{{ discount.description }}</td>
-                <td>{{ discount.start_date }}</td>
-                <td>{{ discount.end_date }}</td>
+                <td>{{ discount[0] }}</td>
+                <td>{{ discount[1] }}</td>
+                <td>{{ discount[2] }}</td>
+                <td>{{ discount[3] }}</td>
             </tr>
             {% endfor %}
         </tbody>
