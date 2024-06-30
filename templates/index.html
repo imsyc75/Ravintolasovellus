@@ -5,37 +5,42 @@ Home
 {% endblock %}
 
 {% block content %}
-<h1>Welcome to YummyHelsinki!</h1>
-{% if session['username'] %}
-    <p>Hello, {{ session['username'] }}!</p>
-{% else %}
-    <p>Please login or register to comment.</p>
-{% endif %}
+<div class="container mt-5">
+    <h1>Welcome to YummyHelsinki!</h1>
+    {% if session['username'] %}
+        <p class="lead">Hello, {{ session['username'] }}!</p>
+    {% else %}
+        <p class="lead">Please login or register to comment.</p>
+    {% endif %}
 
-<h2>Current Discounts</h2>
-{% if discounts %}
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Restaurant</th>
-                <th>Description</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for discount in discounts %}
-            <tr>
-                <td>{{ discount[0] }}</td>
-                <td>{{ discount[1] }}</td>
-                <td>{{ discount[2] }}</td>
-                <td>{{ discount[3] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No discounts available at the moment.</p>
-{% endif %}
+    <div class="card mt-4">
+        <div class="card-body">
+            <h2 class="card-title">Current Discounts</h2>
+            {% if discounts %}
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Restaurant</th>
+                            <th>Description</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for discount in discounts %}
+                        <tr>
+                            <td>{{ discount[0]}}</td>
+                            <td>{{ discount[1] }}</td>
+                            <td>{{ discount[2]}}</td>
+                            <td>{{ discount[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No discounts available at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
-

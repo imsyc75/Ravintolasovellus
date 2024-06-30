@@ -120,7 +120,7 @@ def restaurants():
     categories = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('restaurants.html', restaurants=restaurant_list,categories=categories)
+    return render_template('map.html', restaurants=restaurant_list,categories=categories)
 
 
 
