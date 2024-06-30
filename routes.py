@@ -76,7 +76,7 @@ def login():
 
             if user and check_password_hash(user[1], password):
                 session['username'] = user[0]
-                session['role'] = user[2]  # Keep this line to use the role in session if needed
+                session['role'] = user[2]  
                 if user[2] == 0:  
                     return redirect('/admin_page')
                 else:
@@ -206,6 +206,7 @@ def delete_review(review_id):
     cur.close()
     conn.close()
     return redirect(request.referrer) 
+
 
 
 @app.route('/admin_page')
@@ -378,7 +379,6 @@ def add_discount():
            conn = get_db_connection()
            cur = conn.cursor()
            cur.execute("SELECT restaurant_id FROM restaurants WHERE name = %s", (restaurant_name,))
-           print(f"Executing SQL: SELECT restaurant_id FROM restaurants WHERE name = '{restaurant_name}'")
            restaurant = cur.fetchone()
 
 
@@ -391,7 +391,7 @@ def add_discount():
                return "No restaurant found with that name."
            return redirect('/admin_page')
        except Exception as e:
-           conn.rollback()  # Rollback in case of any error
+           conn.rollback() 
            return f"An error occurred: {str(e)}"
        finally:
            cur.close()
