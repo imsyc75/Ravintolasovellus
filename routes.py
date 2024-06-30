@@ -250,7 +250,7 @@ def add_restaurant():
         category_id = request.form['category_id']
 
         sql = """INSERT INTO restaurants (name, address, description, latitude, longitude, opening_hours, category_id) 
-                 VALUES (%s, %s, %s, %s, %s, %s)"""
+                 VALUES (%s, %s, %s, %s, %s, %s, %s)"""
         cur.execute(sql, (name, address, description, latitude, longitude, opening_hours,category_id))
         conn.commit()
         cur.close()
