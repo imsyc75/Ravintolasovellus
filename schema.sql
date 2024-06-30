@@ -30,7 +30,7 @@ CREATE TABLE reviews (
     user_id INTEGER REFERENCES users,        
     rating INTEGER,         
     comment TEXT,           
-    timestamp TIMESTAMP 
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE discounts (
