@@ -11,5 +11,31 @@ Home
 {% else %}
     <p>Please login or register to comment.</p>
 {% endif %}
+
+<h2>Current Discounts</h2>
+{% if discounts %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Restaurant</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for discount in discounts %}
+            <tr>
+                <td>{{ discount.restaurant_name }}</td>
+                <td>{{ discount.description }}</td>
+                <td>{{ discount.start_date }}</td>
+                <td>{{ discount.end_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No discounts available at the moment.</p>
+{% endif %}
 {% endblock %}
 

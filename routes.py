@@ -7,7 +7,17 @@ from werkzeug.security import generate_password_hash, check_password_hash # type
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    conn = get_db_connection()
+    cur = conn.cursor()
+    sql = """SELECT r.name as restaurant_name, d.description, d.start_date, d.end_date
+        FROM discounts d
+        JOIN restaurants r ON d.restaurant_id = r.restaurant_id
+        WHERE d.end_date >= CURRENT_DATE"""
+    cur.execute(sql)
+    discounts = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('index.html', discounts=discounts)
 
 
 
@@ -210,10 +220,15 @@ def admin_page():
     sql = "SELECT * FROM categories"
     cur.execute(sql)
     categories = cur.fetchall()
-
+    
+    sql = """SELECT d.discount_id, r.name, d.description, d.start_date, d.end_date
+        FROM discounts d
+        JOIN restaurants r ON d.restaurant_id = r.restaurant_id"""
+    cur.execute(sql)
+    discounts = cur.fetchall()
     cur.close()
     conn.close()
-    return render_template('admin_page.html', restaurants=restaurants, categories=categories)
+    return render_template('admin_page.html', restaurants=restaurants, categories=categories, discounts=discounts)
 
 
 
@@ -289,6 +304,7 @@ def delete_restaurant(restaurant_id):
     return redirect('/admin_page')
 
 
+
 @app.route('/add_category', methods=['GET', 'POST'])
 def add_category():
     if request.method == 'GET':
@@ -346,3 +362,45 @@ def search():
         else:
             return render_template('error.html', query=query)
     return render_template('index.html')
+
+
+
+@app.route('/add_discount', methods=['GET', 'POST'])
+def add_discount():
+   if request.method == 'POST':
+       try:
+           restaurant_name = request.form['restaurant_name']
+           description = request.form['description']
+           start_date = request.form['start_date']
+           end_date = request.form['end_date']
+
+
+           conn = get_db_connection()
+           cur = conn.cursor()
+           cur.execute("SELECT restaurant_id FROM restaurants WHERE name = %s", (restaurant_name,))
+           print(f"Executing SQL: SELECT restaurant_id FROM restaurants WHERE name = '{restaurant_name}'")
+           restaurant = cur.fetchone()
+
+
+           if restaurant:
+               restaurant_id = restaurant[0]
+               sql = 'INSERT INTO discounts (restaurant_id, description, start_date, end_date) VALUES (%s, %s, %s, %s)'
+               cur.execute(sql, (restaurant_id, description, start_date, end_date))
+               conn.commit()
+           else:
+               return "No restaurant found with that name."
+           return redirect('/admin_page')
+       except Exception as e:
+           conn.rollback()  # Rollback in case of any error
+           return f"An error occurred: {str(e)}"
+       finally:
+           cur.close()
+           conn.close()
+   else:
+       conn = get_db_connection()
+       cur = conn.cursor()
+       cur.execute("SELECT restaurant_id, name FROM restaurants")
+       restaurants = cur.fetchall()
+       cur.close()
+       conn.close()
+       return render_template('add_discount.html', restaurants=restaurants)
