@@ -5,40 +5,46 @@ Restaurants Map
 {% endblock %}
 
 {% block content %}
-<h1>Helsinki Restaurants Map</h1>
-<select id="categoryFilter" onchange="filterRestaurants()">
-    <option value="">All Categories</option>
-    {% for category in categories %}
-    <option value="{{ category[0] }}">{{ category[1] }}</option>
-    {% endfor %}
-</select>
-<div id="map" style="height: 600px; width: 100%;"></div>
+<div class="container mt-4">
+    <h1 class="text-center" style="color: #ffca2c;">Explore food in Helsinki!</h1>
+    <div class="d-flex justify-content-center mb-3">
+        <select id="categoryFilter" class="form-select w-auto" onchange="filterRestaurants()" style="background-color: #fff9e6; border-color: #ffca2c;">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+            <option value="{{ category[0] }}">{{ category[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="card">
+        <div class="card-body p-0">
+            <div id="map" style="height: 600px;"></div>
+        </div>
+    </div>
+</div>
 <script>
-        var map = L.map('map').setView([60.1699, 24.9384], 12); 
+    var map = L.map('map').setView([60.1699, 24.9384], 12); 
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-        var restaurants = {{ restaurants|tojson|safe }};
-        var markers = [];
+    var restaurants = {{ restaurants|tojson|safe }};
+    var markers = [];
 
-        function filterRestaurants() {
-            var selectedCategory = document.getElementById('categoryFilter').value;
-            markers.forEach(marker => map.removeLayer(marker)); 
-            markers = [];
-            restaurants.forEach(function(restaurant) {
-                if (restaurant[7] == selectedCategory || selectedCategory === '') { 
-                    var marker = L.marker([parseFloat(restaurant[4]), parseFloat(restaurant[5])]).addTo(map); 
-                    marker.bindPopup("<b>" + restaurant[1] + "</b><br>" + restaurant[2] +
-                        "<br><a href='/restaurant/" + restaurant[0] + "'>More Info</a>");
-                    markers.push(marker);
-                }
-            });
+    function filterRestaurants() {
+        var selectedCategory = document.getElementById('categoryFilter').value;
+        markers.forEach(marker => map.removeLayer(marker)); 
+        markers = [];
+        restaurants.forEach(function(restaurant) {
+            if (restaurant[7] == selectedCategory || selectedCategory === '') { 
+                var marker = L.marker([parseFloat(restaurant[4]), parseFloat(restaurant[5])]).addTo(map); 
+                marker.bindPopup("<b>" + restaurant[1] + "</b><br>" + restaurant[2] +
+                    "<br><a href='/restaurant/" + restaurant[0] + "'>More Info</a>");
+                markers.push(marker);
+            }
+        });
+    }
 
-        }
-
-        filterRestaurants();
+    filterRestaurants();
 </script>
 {% endblock %}
-

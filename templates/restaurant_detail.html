@@ -5,34 +5,84 @@
 {% endblock %}
 
 {% block content %}
-<h1>{{ restaurant.name }}</h1>
-<p>{{ restaurant.description }}</p>
-<p>Address: {{ restaurant.address }}</p>
-<p>Opening hours: {{ restaurant.opening_hours }}</p>
-{% if session.username %}
-<h2>Add Comment</h2>
-<form action="{{ url_for('add_review', restaurant_id=restaurant.restaurant_id) }}" method="post">
-    Rating: <input type="number" name="rating" min="1" max="5" required>
-    Comment: <textarea name="comment" required></textarea>
-    <button type="submit">Submit</button>
-</form>
-{% endif %}
+<style>
+    .restaurant-info {
+        background-color: #fff9e6;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .reviews {
+        background-color: #ffefc3;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .comment {
+        background-color: #ffffff;
+        padding: 15px;
+        margin-top: 10px;
+        border: 1px solid #ffca2c;
+        border-radius: 5px;
+    }
+    .add-comment {
+        background-color: #ffefc3;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .form-control, .btn {
+        margin-bottom: 10px;
+    }
+</style>
 
-<h2>Comments</h2>
-<div>
-    {% for review in reviews %}
-    <div>
-        <strong>{{ review.user_name }}</strong> rates: {{ review.rating }}
-        <p>{{ review.comment }}</p>
-        <p>Time: {{ review.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
-        {% if session.role == 0 %} 
-            <form action="{{ url_for('delete_review', review_id=review.review_id) }}" method="post">
-                <button type="submit" onclick="return confirm('Are you sure you want to delete this comment?');">Delete Comment</button>
-            </form>
-        {% endif %}
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="restaurant-info">
+                <h1 class="display-4">{{ restaurant.name }}</h1>
+                <p>{{ restaurant.description }}</p>
+                <p>Address: {{ restaurant.address }}</p>
+                <p>Opening hours: {{ restaurant.opening_hours }}</p>
+            </div>
+
+            <div class="reviews">
+                <h2>Comments</h2>
+                {% for review in reviews %}
+                <div class="comment">
+                    <strong>{{ review.user_name }}</strong> rates: {{ review.rating }}
+                    <p>{{ review.comment }}</p>
+                    <p>Time: {{ review.timestamp.strftime('%Y-%m-%d %H:%M') }}</p>
+                    {% if session.role == 0 %} 
+                        <form action="{{ url_for('delete_review', review_id=review.review_id) }}" method="post">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this comment?');">Delete Comment</button>
+                        </form>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            {% if session.username %}
+            <div class="add-comment">
+                <h2>Add Comment</h2>
+                <form action="{{ url_for('add_review', restaurant_id=restaurant.restaurant_id) }}" method="post">
+                    <div class="mb-3">
+                        <label>Rating:</label>
+                        <input type="number" class="form-control" name="rating" min="1" max="5" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Comment:</label>
+                        <textarea class="form-control" name="comment" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
     </div>
-    {% endfor %}
 </div>
 
-<a href="/restaurants">Back to the map</a>
+<a href="/restaurants" class="btn btn-link">Back to the map</a>
 {% endblock %}
