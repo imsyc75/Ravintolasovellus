@@ -328,3 +328,21 @@ def delete_category(category_id):
         cur.close()
         conn.close()
     return redirect('/admin_page')
+
+
+
+@app.route('/search')
+def search():
+    query = request.args.get('q', '')
+    if query:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT restaurant_id FROM restaurants WHERE name LIKE %s", ('%' + query + '%',))
+        restaurant = cur.fetchone()
+        cur.close()
+        conn.close()
+        if restaurant:
+            return redirect(f'/restaurant/{restaurant[0]}')
+        else:
+            return render_template('error.html', query=query)
+    return render_template('index.html')
