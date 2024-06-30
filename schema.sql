@@ -38,5 +38,5 @@ CREATE TABLE discounts (
    restaurant_id INTEGER NOT NULL REFERENCES restaurants(restaurant_id),
    description TEXT,
    start_date DATE,
-   end_date DATE,
+   end_date DATE
 );
